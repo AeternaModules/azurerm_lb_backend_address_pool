@@ -19,12 +19,20 @@ EOT
     name               = string
     synchronous_mode   = optional(string)
     virtual_network_id = optional(string)
-    tunnel_interface = optional(object({
+    tunnel_interface = optional(list(object({
       identifier = number
       port       = number
       protocol   = string
       type       = string
-    }))
+    })))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.lb_backend_address_pools : (
+        v.tunnel_interface == null || (length(v.tunnel_interface) >= 1)
+      )
+    ])
+    error_message = "Each tunnel_interface list must contain at least 1 items"
+  }
 }
 

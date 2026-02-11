@@ -7,7 +7,7 @@ resource "azurerm_lb_backend_address_pool" "lb_backend_address_pools" {
   virtual_network_id = each.value.virtual_network_id
 
   dynamic "tunnel_interface" {
-    for_each = each.value.tunnel_interface != null ? [each.value.tunnel_interface] : []
+    for_each = each.value.tunnel_interface != null ? each.value.tunnel_interface : []
     content {
       identifier = tunnel_interface.value.identifier
       port       = tunnel_interface.value.port
