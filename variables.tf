@@ -26,26 +26,13 @@ EOT
       type       = string
     })))
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.lb_backend_address_pools : (
-        v.tunnel_interface == null || (length(v.tunnel_interface) >= 1)
-      )
-    ])
-    error_message = "Each tunnel_interface list must contain at least 1 items"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.lb_backend_address_pools : (
-        length(v.name) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_lb_backend_address_pool's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
   # Review, translate into a real validation{} block above, and delete once confirmed.
+  # path: name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: loadbalancer_id
   #   source:    [from loadbalancers.ValidateLoadBalancerID] !ok
   # path: loadbalancer_id
