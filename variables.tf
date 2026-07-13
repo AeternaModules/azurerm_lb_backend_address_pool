@@ -26,26 +26,14 @@ EOT
       type       = string
     })))
   }))
-  # --- Unconfirmed validation candidates, derived from azurerm_lb_backend_address_pool's provider source ---
-  # Not auto-enabled: either a bespoke provider validator we can't safely translate,
-  # or a path that crosses a list-typed block (needs its own for_each wrapping).
-  # Review, translate into a real validation{} block above, and delete once confirmed.
-  # path: name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: loadbalancer_id
-  #   source:    [from loadbalancers.ValidateLoadBalancerID] !ok
-  # path: loadbalancer_id
-  #   source:    [from loadbalancers.ValidateLoadBalancerID] err != nil
-  # path: synchronous_mode
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: tunnel_interface.type
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: tunnel_interface.protocol
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: virtual_network_id
-  #   source:    [from commonids.ValidateVirtualNetworkID] !ok
-  # path: virtual_network_id
-  #   source:    [from commonids.ValidateVirtualNetworkID] err != nil
+  validation {
+    condition = alltrue([
+      for k, v in var.lb_backend_address_pools : (
+        length(v.name) > 0
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  # Note: 7 additional provider-side validators are enforced at apply time but not mirrored as validation{} blocks here (bespoke or non-mechanically-translatable).
 }
 
